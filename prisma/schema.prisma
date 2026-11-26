@@ -1,0 +1,73 @@
+// VAU Experience — database schema (MySQL on Hostinger)
+//
+// Localized fields (title, summary, ...) are stored as a small JSON string per column:
+//   {"sq": "...", "en": "...", "it": "..."}
+// This avoids the MySQL/MariaDB JSON column differences and keeps the schema short.
+// Photos are stored as LongBlob and served through /api/images/[id] (they survive redeploys).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Tour {
+  id             Int         @id @default(autoincrement())
+  slug           String      @unique @db.VarChar(160)
+  isPremium      Boolean     @default(false)
+  category       String      @default("") @db.VarChar(40)
+  featured       Boolean     @default(false)
+  published      Boolean     @default(true)
+  sortOrder      Int         @default(0)
+  /// Normal tour: price per person (ALL). Premium: package price (ALL).
+  price          Int
+  /// Per-person price in ALL, used for the booking estimate (equals price for normal tours).
+  pricePerPerson Int
+  title          String      @db.Text
+  subtitle       String      @db.Text
+  summary        String      @db.Text
+  description    String      @db.Text
+  duration       String      @db.Text
+  location       String      @db.Text
+  groupSize      String      @db.Text
+  priceNote      String      @db.Text
+  /// {"sq": [...], "en": [...], "it": [...]} — highlights (normal) or inclusions (premium)
+  highlights     String      @db.Text
+  images         TourImage[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([published, isPremium, sortOrder])
+}
+
+model TourImage {
+  id        Int      @id @default(autoincrement())
+  tourId    Int
+  tour      Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  /// External URL (used by the demo tours). Uploaded photos use `data` instead.
+  url       String?  @db.VarChar(1000)
+  data      Bytes?   @db.LongBlob
+  mimeType  String?  @db.VarChar(60)
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([tourId, position])
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(160)
+  email     String   @db.VarChar(200)
+  tour      String?  @db.VarChar(300)
+  date      String?  @db.VarChar(40)
+  guests    Int?
+  message   String   @db.Text
+  lang      String   @db.VarChar(5)
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([read, createdAt])
+}

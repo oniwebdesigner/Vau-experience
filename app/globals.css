@@ -1,0 +1,157 @@
+@import "@fontsource-variable/archivo";
+@import "@fontsource-variable/manrope";
+@import "tailwindcss";
+
+/* Brand tokens from the approved design (Tailwind v4 theme) */
+@theme {
+  --color-lagoon: #14403f;
+  --color-lagoon-deep: #0f3332;
+  --color-lagoon-night: #0b1f1f;
+  --color-lagoon-mist: #2e5e5c;
+
+  --color-jade: #2e7a6f;
+  --color-jade-deep: #1f5c57;
+  --color-jade-soft: #3e8c80;
+
+  --color-sand: #f4eee4;
+  --color-sand-deep: #eae2d4;
+  --color-sand-paper: #faf7f1;
+
+  --color-clay: #b9593a;
+  --color-clay-deep: #9a4629;
+
+  --color-ink: #1b1f1e;
+  --color-ink-soft: #4b5452;
+
+  --color-gold: #c2a468;
+  --color-gold-soft: #d6bf8e;
+  --color-gold-pale: #eadbb8;
+  --color-gold-deep: #7e6330;
+
+  --color-whatsapp: #25d366;
+  --color-whatsapp-deep: #075e54;
+
+  --font-display: "Archivo Variable", "Archivo", system-ui, sans-serif;
+  --font-sans: "Manrope Variable", "Manrope", system-ui, sans-serif;
+
+  --radius-media: 10px;
+  --container-site: 1440px;
+}
+
+/* Tailwind v4 compatibility: keep the v3 defaults the design was built on */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-sand font-sans text-ink;
+  }
+  em {
+    font-style: normal;
+  }
+  :focus-visible {
+    outline: 2px solid #b9593a;
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: #14403f;
+    color: #f4eee4;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  /* Small uppercase labels and durations — precise and aligned */
+  .label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.2em];
+    font-variant-numeric: tabular-nums;
+  }
+  /* Key figures (stats, years) */
+  .figure {
+    @apply font-display font-semibold tracking-[-0.01em];
+    font-variant-numeric: tabular-nums;
+  }
+  /* Prices: deliberately quiet — the title and photo lead */
+  .price {
+    @apply font-sans text-[13px] font-medium tracking-[0.01em];
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Emphasis inside grotesque headlines: a lighter weight, never italic */
+.font-display em {
+  font-style: normal;
+  font-weight: 300;
+}
+
+/* Premium: rich emerald / jade surface with soft light */
+.premium-surface {
+  background-color: #1f5c57;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(255, 244, 220, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 45% at 100% 100%, rgba(194, 164, 104, 0.12), transparent 65%),
+    linear-gradient(165deg, #1f5c57 0%, #2e7a6f 100%);
+}
+
+/* A slow, subtle shimmer for the Premium nav pill */
+.premium-shimmer {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.premium-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgba(234, 219, 184, 0.45) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: premium-shimmer 5.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes premium-shimmer {
+  0%,
+  65% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .premium-shimmer::after {
+    animation: none;
+    display: none;
+  }
+}
+
+/* Subtle paper grain over the whole site */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
